@@ -1,6 +1,6 @@
 ---
 name: New Feature and enhancement
-about: Suggest an idea for this project
+about: Adding a new feature/enhancement
 
 ---
 
