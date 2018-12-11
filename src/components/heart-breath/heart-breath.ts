@@ -16,7 +16,7 @@ export class HeartBreathComponent {
 
   constructor() {
     console.log('Hello HeartBreathComponent Component');
-    this.text = 'Hello World';
+    this.text = 'Hello World!!!!';
   }
 
 }

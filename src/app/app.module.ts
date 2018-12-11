@@ -7,10 +7,13 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 
+import { HeartBreathComponent } from '../components/heart-breath/heart-breath'
+
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    HomePage, 
+    HeartBreathComponent
   ],
   imports: [
     BrowserModule,
