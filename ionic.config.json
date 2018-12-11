@@ -1,0 +1,8 @@
+{
+  "name": "zone",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular",
+  "pro_id": "d0d65278"
+}
