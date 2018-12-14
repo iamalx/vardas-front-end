@@ -9,6 +9,7 @@ import { HomePage } from '../pages/home/home';
 
 import { HeartBreathComponent } from '../components/heart-breath/heart-breath'
 
+import { BluetoothLE } from '@ionic-native/bluetooth-le';
 @NgModule({
   declarations: [
     MyApp,
@@ -25,6 +26,7 @@ import { HeartBreathComponent } from '../components/heart-breath/heart-breath'
     HomePage
   ],
   providers: [
+    BluetoothLE,
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
