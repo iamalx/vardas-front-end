@@ -34,7 +34,7 @@ export class HeartBreathComponent {
     this.bluetoothle.initialize( params ).then( blue => {
       this.text.push(blue.status) // logs 'enabled'
       console.log(blue.status, "#3")
-      this.scan()
+      this.connect()
     });
   }
 
@@ -58,7 +58,7 @@ export class HeartBreathComponent {
     setTimeout( _ => {
       this.bluetoothle.stopScan().then( any => {
         console.log(any.status, "#6")
-        this.connect()
+        // this.connect()
       })
     }, 3000 )
   }
@@ -73,58 +73,65 @@ export class HeartBreathComponent {
       for( let i in any) {
         console.log(any[i], "#7.5")
       }
+      this.holder()
     }, error => {
       console.log(error.message, 'error', '#7.6')
       this.bluetoothle.close(connectParams).then( data => console.log(data.status, 'closed', "#7.7"))
     }) 
   }
 
-  holder() {
-
+  discover() {
     let discoverParams = {
       "address": "FE:4C:FA:56:CF:63",
       "clearCache": true
     }
+    this.bluetoothle.discover(discoverParams).then( any => {
+      console.log(any['status'], 'any.status', '#8')
+      console.log(JSON.stringify(any), '#8.1')
+    }, error => {
+      console.log(error.message, error, 'error8.2')
+    })
+  }
 
+  read() {
     const readParams = {
-      "address": "E0:F5:3C:B6:DE:5A",
-      "service": '1800',
+      "address": "FE:4C:FA:56:CF:63",
+      "service": '1801',
       "characteristic": '2A00',
     }
+    this.bluetoothle.read(readParams).then( any => {
+      console.log(JSON.stringify(any), "#9")
+    }, error => { 
+      console.log(JSON.stringify(error), 'error9.2')
+    })
+  }
 
-    // let pams = {
-    //   address: "E0:F5:3C:B6:DE:5A",
-    //   service: '180D',
-    //   characteristic: "2A37"
-    // }
+  holder() {
+    let pams = {
+      address: "FE:4C:FA:56:CF:63",
+      service: '1801',
+      characteristic: "2A00"
+    }
     // this.bluetoothle.disconnect(connectParams).then( any => { 
     //   console.log(any, any.status, "#11")
     // })
 
-      this.bluetoothle.discover(discoverParams).then( any => {
-        console.log(any['status'], 'any.status', '#8')
-        console.log(JSON.stringify(any), '#8.1')
+      
+
+     
+
+      this.bluetoothle.subscribe( pams).subscribe( data => {
+        console.log(JSON.stringify(data), '#10')
+        this.read()
       }, error => {
-        console.log(error.message, error, 'error8.2')
-      })
-
-      this.bluetoothle.read(readParams).then( any => {
-        console.log(JSON.stringify(any), "#9")
-      }, error => { 
-        console.log(JSON.stringify(error), 'error9.2')
-      })
-
-      // this.bluetoothle.subscribe( pams).subscribe( data => {
-      //   console.log(JSON.stringify(data), '#10')
-      // }, error => {
-      //   console.log(error.message, error, 'error#10.2')
-      // });
+        console.log(error.message, error, 'error#10.2')
+      });
       // this.bluetoothle.read(readParams).then( any => {
       //   console.log(any, any.services)
       // }, error => {
       //   console.log(error.message, error, 'error8.2')
       // })
-
+    
 
   }
 }
