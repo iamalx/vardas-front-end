@@ -65,7 +65,7 @@ export class HeartBreathComponent {
 
   connect() {
     let connectParams = {
-      "address": "E0:F5:3C:B6:DE:5A"
+      "address": "FE:4C:FA:56:CF:63"
     }
     this.bluetoothle.connect( connectParams ).subscribe( any => {
       console.log(any.status, "#7")
@@ -79,11 +79,10 @@ export class HeartBreathComponent {
     }) 
   }
 
-
   holder() {
 
     let discoverParams = {
-      "address": "E0:F5:3C:B6:DE:5A",
+      "address": "FE:4C:FA:56:CF:63",
       "clearCache": true
     }
 
