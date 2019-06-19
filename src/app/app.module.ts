@@ -8,13 +8,15 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { BleSerialPage } from '../pages/ble-serial/ble-serial';
 
 import { HeartBreathComponent } from '../components/heart-breath/heart-breath'
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage, 
+    HomePage,
+    BleSerialPage, 
     HeartBreathComponent
   ],
   imports: [
@@ -24,7 +26,8 @@ import { HeartBreathComponent } from '../components/heart-breath/heart-breath'
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
+    HomePage,
+    BleSerialPage
   ],
   providers: [
     StatusBar,

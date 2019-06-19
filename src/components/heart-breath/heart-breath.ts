@@ -72,9 +72,10 @@ export class HeartBreathComponent {
       console.log(Object.keys(any), '"#7.2')
       for( let i in any) {
         console.log(any[i], "#7.5")
+        if( any[i] == "disconnected") clearInterval(this.interval)
       }
-     
       this.discover()
+    
     }, error => {
       console.log(error.message, 'error', '#7.6')
       this.bluetoothle.close(connectParams).then( data => console.log(data.status, 'closed', "#7.7"))
@@ -89,30 +90,35 @@ export class HeartBreathComponent {
     this.bluetoothle.discover(discoverParams).then( any => {
       console.log(any['status'], 'any.status', '#8')
       console.log(JSON.stringify(any), '#8.1')
-      console.log("serviceUUID:", any['services'][3]["uuid"])
-      this.holder(any['services'][3]["uuid"])
+      console.log("serviceUUID:", any['services'][0]["uuid"])
+      this.read(any['services'][0]["uuid"])
     }, error => {
       console.log(error.message, error, 'error8.2')
     })
   }
 
+  interval: any;
   read(service: string) {
     const readParams = {
       "address": "FE:4C:FA:56:CF:63",
       "service": service,
-      "characteristic": '2A37',
+      "characteristic": '2A01',
     }
-    this.bluetoothle.read(readParams).then( data => {
-      console.log(JSON.stringify(data['value']), "#9")
-      let ndata = [];
-        for(let i = 0; i < data['value'].length; i++) {
-          if(data['value'].charCodeAt(i) != 254) ndata.push(data['value'].charCodeAt(i));
-        }
-      
-      console.log(ndata);
-    }, error => { 
-      console.log(JSON.stringify(error), 'error9.2')
-    })
+    // this.bluetoothle.write('dsd').then( data => {
+    //   console.log("write", data, "#@")
+    // })
+    this.interval = setInterval( _ => {
+      this.bluetoothle.read(readParams).then( data => {
+        console.log(JSON.stringify(data['value']), "#9")
+        let ndata = [];
+          for(let i = 0; i < data['value'].length; i++) {
+            if(data['value'].charCodeAt(i) != 254) ndata.push(data['value'].charCodeAt(i));
+          }
+        console.log(ndata);
+      }, error => { 
+        console.log(JSON.stringify(error), 'error9.2')
+      })
+    }, 500)
   }
 
   holder(service) {

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
+import { HomePage } from '../../pages/home/home';
 
 
 /**
@@ -18,7 +19,7 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 export class BleSerialPage {
 
   constructor(public navCtrl: NavController,
-              public navParams: NavParams
+              public navParams: NavParams,
               public bluetoothSerial: BluetoothSerial) {
     this.checkIfBleEnabled()
   }
@@ -30,6 +31,7 @@ export class BleSerialPage {
   checkIfBleEnabled() {
     this.bluetoothSerial.isEnabled().then( res => {
       console.log("1# is eneabled: ")
+      this.listBondedDevices()
     }, error => {
       console.log("#1 error:", error.message, error)
     })
@@ -37,11 +39,34 @@ export class BleSerialPage {
   
   listBondedDevices() {
     this.bluetoothSerial.list().then( res => {
-      console.log("#2 list:", res)
+      console.log("#2 list:", JSON.stringify(res))
+      this.connectDevice(res[0]['address'])
     }, error => {
       console.log("#2 error:", error.message, error)
     })
   }
 
+  connectDevice(address: string) {
+    let connectParams = {
+      "address": address
+    }
+    console.log('address:', address)
+    this.bluetoothSerial.connect(address).subscribe( res => {
+      console.log("#3 connect:", res)
+      this.read()
+    }, error => {
+      console.log("#3 error:", error)
+    })
+  }
 
+  read() {
+    this.bluetoothSerial.read().then( data => {
+      console.log("#3 connect:", data)
+    }, error => {
+      console.log("#3 error:", error.message, error)
+    })
+  }
+  toBLE() {
+    this.navCtrl.setRoot(HomePage);
+  }
 }
