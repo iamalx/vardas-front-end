@@ -73,7 +73,8 @@ export class HeartBreathComponent {
       for( let i in any) {
         console.log(any[i], "#7.5")
       }
-      this.holder()
+     
+      this.discover()
     }, error => {
       console.log(error.message, 'error', '#7.6')
       this.bluetoothle.close(connectParams).then( data => console.log(data.status, 'closed', "#7.7"))
@@ -88,41 +89,58 @@ export class HeartBreathComponent {
     this.bluetoothle.discover(discoverParams).then( any => {
       console.log(any['status'], 'any.status', '#8')
       console.log(JSON.stringify(any), '#8.1')
+      console.log("serviceUUID:", any['services'][3]["uuid"])
+      this.holder(any['services'][3]["uuid"])
     }, error => {
       console.log(error.message, error, 'error8.2')
     })
   }
 
-  read() {
+  read(service: string) {
     const readParams = {
       "address": "FE:4C:FA:56:CF:63",
-      "service": '1801',
-      "characteristic": '2A00',
+      "service": service,
+      "characteristic": '2A37',
     }
-    this.bluetoothle.read(readParams).then( any => {
-      console.log(JSON.stringify(any), "#9")
+    this.bluetoothle.read(readParams).then( data => {
+      console.log(JSON.stringify(data.value), "#9")
+      let ndata = [];
+        for(let i = 0; i < data.value.length; i++) {
+          if(data.value.charCodeAt(i) != 254) ndata.push(data.value.charCodeAt(i));
+        }
+      
+      console.log(ndata);
     }, error => { 
       console.log(JSON.stringify(error), 'error9.2')
     })
   }
 
-  holder() {
+  holder(service) {
+   
     let pams = {
       address: "FE:4C:FA:56:CF:63",
-      service: '1801',
-      characteristic: "2A00"
+      service: service,
+      characteristic: "2A37"
     }
+    let params = {
+      WriteCharacteristicParams: null
+    }
+    this.bluetoothle.write(params.WriteCharacteristicParams).then( data => {
+      console.log(data)
+    })
     // this.bluetoothle.disconnect(connectParams).then( any => { 
     //   console.log(any, any.status, "#11")
     // })
 
-      
-
-     
-
       this.bluetoothle.subscribe( pams).subscribe( data => {
         console.log(JSON.stringify(data), '#10')
-        this.read()
+        let ndata = [];
+        // for(let i = 0; i < data.value.length; i++) {
+        //   if(data.value.charCodeAt(i) != 254) ndata.push(data.value.charCodeAt(i));
+        // }
+      
+      console.log(ndata);
+        this.read(service)
       }, error => {
         console.log(error.message, error, 'error#10.2')
       });
