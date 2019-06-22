@@ -9,6 +9,7 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { BleSerialPage } from '../pages/ble-serial/ble-serial';
+import { BleCentralPage } from '../pages/ble-central/ble-central';
 
 import { HeartBreathComponent } from '../components/heart-breath/heart-breath'
 
@@ -17,6 +18,7 @@ import { HeartBreathComponent } from '../components/heart-breath/heart-breath'
     MyApp,
     HomePage,
     BleSerialPage, 
+    BleCentralPage,
     HeartBreathComponent
   ],
   imports: [
@@ -27,7 +29,8 @@ import { HeartBreathComponent } from '../components/heart-breath/heart-breath'
   entryComponents: [
     MyApp,
     HomePage,
-    BleSerialPage
+    BleSerialPage,
+    BleCentralPage
   ],
   providers: [
     StatusBar,
