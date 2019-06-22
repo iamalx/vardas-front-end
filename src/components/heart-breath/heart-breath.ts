@@ -34,7 +34,7 @@ export class HeartBreathComponent {
     this.bluetoothle.initialize( params ).then( blue => {
       this.text.push(blue.status) // logs 'enabled'
       console.log(blue.status, "#3")
-      this.connect()
+      this.connect() 
     });
   }
 
@@ -72,7 +72,12 @@ export class HeartBreathComponent {
       console.log(Object.keys(any), '"#7.2')
       for( let i in any) {
         console.log(any[i], "#7.5")
-        if( any[i] == "disconnected") clearInterval(this.interval)
+        if( any[i] == "disconnected") {
+          clearInterval(this.interval)
+          this.bluetoothle.disconnect(connectParams).then( _ => {
+            console.log(_ , "#disconencted")
+          })
+        }
       }
       this.discover()
     
@@ -90,8 +95,7 @@ export class HeartBreathComponent {
     this.bluetoothle.discover(discoverParams).then( any => {
       console.log(any['status'], 'any.status', '#8')
       console.log(JSON.stringify(any), '#8.1')
-      console.log("serviceUUID:", any['services'][0]["uuid"])
-      this.read(any['services'][0]["uuid"])
+      this.read(any['services'][3]["uuid"])
     }, error => {
       console.log(error.message, error, 'error8.2')
     })
@@ -102,23 +106,70 @@ export class HeartBreathComponent {
     const readParams = {
       "address": "FE:4C:FA:56:CF:63",
       "service": service,
-      "characteristic": '2A01',
+      "characteristic": '2A37',
+      // "descriptor": "2902"
     }
     // this.bluetoothle.write('dsd').then( data => {
     //   console.log("write", data, "#@")
     // })
+    console.log('service:', service)
+    this.subscribe(service, readParams)
+    this.writeDescriptor(service)
+    this.notify(service)
     this.interval = setInterval( _ => {
       this.bluetoothle.read(readParams).then( data => {
+        console.log('data:',JSON.stringify(data))
         console.log(JSON.stringify(data['value']), "#9")
-        let ndata = [];
-          for(let i = 0; i < data['value'].length; i++) {
-            if(data['value'].charCodeAt(i) != 254) ndata.push(data['value'].charCodeAt(i));
-          }
-        console.log(ndata);
+        // let ndata = [];
+        //   for(let i = 0; i < data['value'].length; i++) {
+        //     if(data['value'].charCodeAt(i) != 254) ndata.push(data['value'].charCodeAt(i));
+        //   }
+        // console.log(ndata);
       }, error => { 
         console.log(JSON.stringify(error), 'error9.2')
       })
-    }, 500)
+    }, 10000)
+  }
+//subs to heart rate measmnt characteristic 180D
+  subscribe(service, readParams) {
+    this.bluetoothle.subscribe(readParams).subscribe( data => {
+      console.log(JSON.stringify(data), '#10')
+    }, error => {
+      console.log(error.message, error, 'error#10.2')
+    });
+  }
+
+  notify(service) {
+    var params = {
+      "service": service,
+      "characteristic": '2A37',
+      "value":"U3Vic2NyaWJlIEhlbGxvIFdvcmxk" //Subscribe Hello World
+    };
+    console.log("notify" )
+    this.bluetoothle.notify(params).then( any => {
+      console.log("#notify", any)
+    }, error => {
+      console.log(error, "error:notify" )
+    })
+  }
+
+  writeDescriptor(service: any) {
+    var string = "Hello World";
+    var bytes = this.bluetoothle.stringToBytes(string);
+    var encodedString = this.bluetoothle.bytesToEncodedString(bytes);
+    var params = {
+      "address": "FE:4C:FA:56:CF:63",
+      "service": service,
+      "characteristic": '2A37',
+      "descriptor": "2902",
+      "value": encodedString, //Subscribe Hello World
+    };
+    console.log('#12', params)
+    this.bluetoothle.writeDescriptor(params).then( any => {
+      console.log("#12-writeDescritor:", )
+    }, error => {
+      console.log(JSON.stringify(error), "#12")
+    })
   }
 
   holder(service) {
@@ -138,18 +189,6 @@ export class HeartBreathComponent {
     //   console.log(any, any.status, "#11")
     // })
 
-    this.bluetoothle.subscribe( pams).subscribe( data => {
-      console.log(JSON.stringify(data), '#10')
-      let ndata = [];
-      // for(let i = 0; i < data.value.length; i++) {
-      //   if(data.value.charCodeAt(i) != 254) ndata.push(data.value.charCodeAt(i));
-      // }
-    
-    console.log(ndata);
-      this.read(service)
-    }, error => {
-      console.log(error.message, error, 'error#10.2')
-    });
     // this.bluetoothle.read(readParams).then( any => {
     //   console.log(any, any.services)
     // }, error => {

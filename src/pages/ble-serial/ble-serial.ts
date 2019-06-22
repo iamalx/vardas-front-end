@@ -21,6 +21,7 @@ export class BleSerialPage {
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               public bluetoothSerial: BluetoothSerial) {
+    this.bluetoothSerial.enable().then( _ => {})
     this.checkIfBleEnabled()
   }
 
@@ -40,17 +41,18 @@ export class BleSerialPage {
   listBondedDevices() {
     this.bluetoothSerial.list().then( res => {
       console.log("#2 list:", JSON.stringify(res))
-      this.connectDevice(res[0]['address'])
+      this.connectDevice(res[0]['id'])
     }, error => {
       console.log("#2 error:", error.message, error)
     })
   }
 
-  connectDevice(address: string) {
+  connectDevice(address: any) {
     let connectParams = {
       "address": address
     }
     console.log('address:', address)
+    this.bluetoothSerial.write("ahhhhhhh\n");
     this.bluetoothSerial.connect(address).subscribe( res => {
       console.log("#3 connect:", res)
       this.read()
