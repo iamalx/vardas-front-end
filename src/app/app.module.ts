@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { BluetoothLE } from '@ionic-native/bluetooth-le';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
+import { BLE } from '@ionic-native/ble/index';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -36,6 +37,7 @@ import { HeartBreathComponent } from '../components/heart-breath/heart-breath'
     StatusBar,
     BluetoothLE,
     BluetoothSerial,
+    BLE,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

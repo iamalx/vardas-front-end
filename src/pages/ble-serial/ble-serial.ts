@@ -21,12 +21,21 @@ export class BleSerialPage {
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               public bluetoothSerial: BluetoothSerial) {
-    this.bluetoothSerial.enable().then( _ => {})
-    this.checkIfBleEnabled()
+    // this.bluetoothSerial.enable().then( _ => {})
+    this.enableBle()
   }
+
+  //1) location permission 
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad BleSerialPage');
+  }
+
+  enableBle() {
+    this.bluetoothSerial.enable().then( res => {
+      console.log('res-enable:', res)
+      this.checkIfBleEnabled()
+    })
   }
 
   checkIfBleEnabled() {
@@ -41,7 +50,7 @@ export class BleSerialPage {
   listBondedDevices() {
     this.bluetoothSerial.list().then( res => {
       console.log("#2 list:", JSON.stringify(res))
-      this.connectDevice(res[0]['id'])
+      this.connectDevice(res[0]['address'])
     }, error => {
       console.log("#2 error:", error.message, error)
     })

@@ -21,9 +21,16 @@ export class HeartBreathComponent {
                 public plt: Platform ) {
     this.plt.ready().then( readySource => {
       this.text.push(readySource)
-      this.initialize()
+      // this.initialize()
     });
   }
+
+  //location
+  //disconnect, stopsubscribe
+  //update
+  //write
+  //bond
+  //merge PR
 
   initialize() {
     let params: object = {
@@ -95,25 +102,54 @@ export class HeartBreathComponent {
     this.bluetoothle.discover(discoverParams).then( any => {
       console.log(any['status'], 'any.status', '#8')
       console.log(JSON.stringify(any), '#8.1')
-      this.read(any['services'][3]["uuid"])
+      // this.read(any['services'][3]["uuid"])
+      console.log("discover-services", any['services'][3]["uuid"])
+      this.write(any['services'][3]["uuid"])
+      // this.bond(any['services'][3]["uuid"])
+      this.subscribe(any['services'][3]["uuid"])
     }, error => {
       console.log(error.message, error, 'error8.2')
     })
   }
 
+  bond(service: any) {
+    this.bluetoothle.bond( {'address': "FE:4C:FA:56:CF:63" } ).subscribe( res => {
+      console.log('bond-res:', JSON.stringify(res))
+    }, error => {
+      console.log(error.message, 'error13')
+    })
+  }
   interval: any;
+
+  write(service: any) {
+    const readParams = {
+      "address": "FE:4C:FA:56:CF:63",
+      "service": service,
+      "characteristic": "2A37",
+      "value": "V3JpdGUgSGVsbG8gV29ybGQ=",
+      "type": "response"
+      // "descriptor": "2902"
+    }
+    console.log("write===>")
+    this.bluetoothle.write(readParams).then( res => {
+      console.log(" write-res :", JSON.stringify(res.value) )
+    }, error => {
+      console.log( JSON.stringify(error), 'error14')
+    })
+  }
+
   read(service: string) {
     const readParams = {
       "address": "FE:4C:FA:56:CF:63",
       "service": service,
-      "characteristic": '2A37',
+      "characteristic": "2A37",
       // "descriptor": "2902"
     }
     // this.bluetoothle.write('dsd').then( data => {
     //   console.log("write", data, "#@")
     // })
     console.log('service:', service)
-    this.subscribe(service, readParams)
+    this.subscribe(service)
     this.writeDescriptor(service)
     this.notify(service)
     this.interval = setInterval( _ => {
@@ -131,8 +167,14 @@ export class HeartBreathComponent {
     }, 10000)
   }
 //subs to heart rate measmnt characteristic 180D
-  subscribe(service, readParams) {
-    this.bluetoothle.subscribe(readParams).subscribe( data => {
+  subscribe(service) {
+    const readPar = {
+      "address": "FE:4C:FA:56:CF:63",
+      "service": service,
+      "characteristic": '2A37',
+      isNotification: null,
+    }
+    this.bluetoothle.subscribe(readPar).subscribe( data => {
       console.log(JSON.stringify(data), '#10')
     }, error => {
       console.log(error.message, error, 'error#10.2')
@@ -182,9 +224,6 @@ export class HeartBreathComponent {
       WriteCharacteristicParams: null
     }
 
-    this.bluetoothle.write(params.WriteCharacteristicParams).then( data => {
-      console.log("write", data, "#@")
-    })
     // this.bluetoothle.disconnect(connectParams).then( any => { 
     //   console.log(any, any.status, "#11")
     // })
